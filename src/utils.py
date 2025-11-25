@@ -23,13 +23,13 @@ class NewRender(gym.Wrapper):
 
         fig = plt.figure(figsize=(8, 8))
 
-        ax_list = [fig.add_subplot(2, 2, 1)]
+        ax_list = [fig.add_subplot(2, 1, 1)]
         img = ax_list[0].imshow(self.env.render())  # prepare to render the environment by using matplotlib and ipython display
         ax_list[0].set_title(title)
         
         pos = 2
         for i in range(pos, 2 + len(viz_list)):
-            ax_list.append(fig.add_subplot(2, 2, i))
+            ax_list.append(fig.add_subplot(2, 1, i))
 
         ax_index = 1
         nrow, ncol = int(self.env.observation_space.n**(0.5)), int(self.env.observation_space.n**(0.5))
@@ -52,6 +52,7 @@ class NewRender(gym.Wrapper):
         for ax in ax_list:
             ax.tick_params(bottom=False, left=False, labelbottom=False, labelleft=False)
 
+        plt.tight_layout()
         
     
 

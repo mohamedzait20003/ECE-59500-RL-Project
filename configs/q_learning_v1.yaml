@@ -1,0 +1,13 @@
+algorithm: Q_learning
+environment: 
+  id: FrozenLake-v1
+  is_slippery: true
+  map_name: 4x4
+
+hyperparameters:
+  strategy: v1
+  potential_reward_shaping: false
+  gamma: 0.8
+  alpha: 0.1
+  render: true
+  max_episode: 100

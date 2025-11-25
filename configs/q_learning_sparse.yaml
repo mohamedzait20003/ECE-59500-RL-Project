@@ -1,11 +1,12 @@
 algorithm: Q_learning
 environment: 
   id: FrozenLake-v1
-  is_slippery: false
+  is_slippery: true
   map_name: 4x4
 
 hyperparameters:
-  strategy: standard
+  strategy: sparse
+  potential_reward_shaping: false
   gamma: 0.8
   alpha: 0.1
   render: true
