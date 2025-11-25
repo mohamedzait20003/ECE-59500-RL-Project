@@ -29,7 +29,7 @@ if __name__ == '__main__':
         yaml.dump(config, f)
 
 
-    env = gym.make(config['environment']['name'], render_mode='rgb_array', is_slippery=config['environment']['is_slippery'], map_name=config['environment']['map_name'])#define the environment.
+    env = gym.make(render_mode='rgb_array', **config['environment'])#define the environment.
     env = NewRender(env)
 
     trainer = importlib.import_module(f"src.algorithms").__dict__[config['algorithm']](env, config['result_dir'], **config['hyperparameters'])

@@ -1,9 +1,8 @@
 algorithm: Q_learning
 environment: 
-  name: FrozenLake-v1
+  id: FrozenLake-v1
   is_slippery: false
   map_name: 4x4
-  reward_schedule: (1, -1, 0) # (goal, hole, step)
 
 hyperparameters:
   strategy: standard

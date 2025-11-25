@@ -4,9 +4,15 @@ import gymnasium as gym
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
-def reward_strategy(strategy, local_step, observation, action, next_observation, reward):
+def observation_to_map(env, observation):
+    map = env.map
+
+def reward_strategy(strategy, done, local_step, observation, action, next_observation, reward):
     if strategy == 'standard':
-        return reward
+        # give penalty for falling into the hole
+        if done and next_observation != 15:
+            reward = -1
+        
     elif strategy == 'v1':
         # give penalty for staying in ground
         if reward == 0:
@@ -25,6 +31,7 @@ def reward_strategy(strategy, local_step, observation, action, next_observation,
     else:
         raise NotImplementedError
 
+    return reward
 
 class Q_learning:
     def __init__(self, env, result_dir, strategy="standard", gamma=0.8, alpha=0.1, eps=0.1, render=False, max_episode=1000):
@@ -77,7 +84,7 @@ class Q_learning:
                     plt.close()
 
                 
-                reward = reward_strategy(self.strategy, local_step, observation, action, next_observation, reward)
+                reward = reward_strategy(self.strategy, done, local_step, observation, action, next_observation, reward)
 
 
                 # q-learning update
@@ -95,3 +102,4 @@ class Q_learning:
 
 
         print("Training finished.\nSuccess rate: {:.2f}%".format(self.success/self.max_episode*100))
+
