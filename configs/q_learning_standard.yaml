@@ -1,0 +1,13 @@
+algorithm: Q_learning
+environment: 
+  name: FrozenLake-v1
+  is_slippery: false
+  map_name: 4x4
+  reward_schedule: (1, -1, 0) # (goal, hole, step)
+
+hyperparameters:
+  strategy: standard
+  gamma: 0.8
+  alpha: 0.1
+  render: true
+  max_episode: 100
