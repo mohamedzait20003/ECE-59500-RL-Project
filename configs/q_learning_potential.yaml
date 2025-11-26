@@ -6,7 +6,7 @@ environment:
 
 hyperparameters:
   strategy: sparse
-  exploration_strategy: epsilon_greedy
+  exploration_strategy: ucb
   potential_reward_shaping: true
   gamma: 0.95
   alpha: 0.8

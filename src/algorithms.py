@@ -8,10 +8,7 @@ from tqdm import tqdm
 
 def reward_strategy(strategy, done, local_step, observation, action, next_observation, reward):
     if strategy == 'sparse':
-        # give penalty for falling into the hole
-        if done and next_observation != 15:
-            reward = -1
-
+        return reward
         
     elif strategy == 'v1':
         # give penalty for staying in ground
