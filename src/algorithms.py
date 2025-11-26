@@ -36,13 +36,14 @@ def reward_strategy(strategy, done, local_step, observation, action, next_observ
 
 
 class Q_learning:
-    def __init__(self, env, result_dir, potential_reward_shaping=False, strategy="sparse", gamma=0.8, alpha=0.1, eps=0.1, render=False, max_episode=1000):
+    def __init__(self, env, result_dir, exploration_strategy="epsilon_greedy", potential_reward_shaping=False, strategy="sparse", gamma=0.8, alpha=0.1, eps=0.1, render=False, max_episode=1000):
         self.state_dim = env.observation_space.n
         self.action_dim = env.action_space.n
         
         self.env = env
         self.strategy = strategy
         self.result_dir = result_dir
+        self.exploration_strategy = exploration_strategy
         self.potential_reward_shaping = potential_reward_shaping
                 
         self.nrow = int(env.observation_space.n**(0.5))
@@ -55,13 +56,28 @@ class Q_learning:
         self.max_episode = max_episode
 
         self.q = np.zeros([self.state_dim, self.action_dim])
+        self.N = np.zeros([self.state_dim, self.action_dim])  # for UCB
 
     def action(self, s):
-        if np.random.random() < self.eps:
-            action = np.random.randint(low=0, high=self.action_dim - 1)
+        if self.exploration_strategy == "epsilon_greedy":
+            if np.random.random() < self.eps:
+                action = np.random.randint(low=0, high=self.action_dim - 1)
+            else:
+                action = np.argmax(self.q[s,:])
+        
+        elif self.exploration_strategy == "softmax":
+            q_values = self.q[s, :]
+            exp_q = np.exp(q_values - np.max(q_values))  # for numerical stability
+            probs = exp_q / np.sum(exp_q)
+            action = np.random.choice(self.action_dim, p=probs)
+        
+        elif self.exploration_strategy == "ucb":
+            ucb_values = self.q[s, :] + 1 / np.sqrt(self.N[s, :] + 1e-5)
+            action = np.argmax(ucb_values)
+            self.N[s, action] += 1
+        
         else:
-            action = np.argmax(self.q[s,:])
-
+            raise NotImplementedError(f"Exploration strategy {self.exploration_strategy} not implemented.")
         return action
 
     def observation_to_map(self, observation):
@@ -99,7 +115,7 @@ class Q_learning:
                 if self.render:
                     self.env.render(title=f"Episode {episode} / step {local_step}", q=self.q)
                     os.makedirs(os.path.join(self.result_dir, 'renders'), exist_ok=True)
-                    plt.savefig(f"{self.result_dir}/renders/render_episode_{episode}_step_{local_step}.png")
+                    plt.savefig(f"{self.result_dir}/renders/render_episode_{episode:04}_step_{local_step:04}.png")
                     plt.close()
 
                 
